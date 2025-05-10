@@ -18,6 +18,10 @@
                     <x-navlist.item before="phosphor-house-line" :href="route('dashboard')" :current="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-navlist.item>
+
+                    <x-navlist.item before="phosphor-list-checks" :href="route('todo.index')" :current="request()->routeIs('todo.*')">
+                        {{ __('Todos') }}
+                    </x-navlist.item>
                 </x-navlist.group>
             </x-navlist>
 

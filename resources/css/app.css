@@ -3,7 +3,7 @@
 @import './modal.css';
 @import './form.css';
 
-@source "../views";
+@source "../views/**/*.blade.php";
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @custom-variant dark (&:where(.dark, .dark *));
