@@ -55,4 +55,12 @@ class TodoController extends Controller
         return to_route('todo.index')
             ->with('success_message', 'Todo Updated Successfully.');
     }
+
+    public function destroy(Todo $todo)
+    {
+        $todo->delete();
+
+        return back()
+            ->with('success_message', 'Todo Deleted Successfully.');
+    }
 }
