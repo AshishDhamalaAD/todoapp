@@ -11,7 +11,7 @@ class TodoController extends Controller
     public function index(Request $request)
     {
         $todos = Todo::query()
-            // ->where('user_id', Auth::id())
+            ->where('user_id', Auth::id())
             // ->latest('id')
             ->latest('reminder_at')
             ->paginate(10);
