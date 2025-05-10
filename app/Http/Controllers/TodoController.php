@@ -24,7 +24,9 @@ class TodoController extends Controller
 
     public function create(Request $request)
     {
-        return view('todos.create');
+        return view('todos.create', [
+            'todo' => new Todo(),
+        ]);
     }
 
     public function store(TodoRequest $request)
@@ -35,5 +37,22 @@ class TodoController extends Controller
 
         return to_route('todo.index')
             ->with('success_message', 'Todo Created Successfully.');
+    }
+
+    public function edit(Request $request, Todo $todo)
+    {
+        return view('todos.create', [
+            'todo' => $todo,
+        ]);
+    }
+
+    public function update(TodoRequest $request, Todo $todo)
+    {
+        $todo->update($request->safe()->merge([
+            'user_id' => Auth::id(),
+        ])->all());
+
+        return to_route('todo.index')
+            ->with('success_message', 'Todo Updated Successfully.');
     }
 }
