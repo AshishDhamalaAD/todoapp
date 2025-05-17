@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Settings;
 use App\Http\Controllers\TodoController;
 use Illuminate\Support\Facades\Route;
@@ -8,12 +9,12 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('todo', TodoController::class);
+    
+    Route::get('dashboard', DashboardController::class)
+        ->name('dashboard');
 
     Route::redirect('settings', 'settings/profile');
 

@@ -122,5 +122,7 @@
 
         {{ $slot }}
 
+        @stack('script')
+
     </body>
 </html>

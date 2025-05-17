@@ -1,18 +1,39 @@
 <x-layouts.app :title="__('Dashboard')">
-    <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
-        <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-gray-100/20" />
-            </div>
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-gray-100/20" />
-            </div>
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-gray-100/20" />
-            </div>
-        </div>
-        <div class="relative h-full flex-1 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-            <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-gray-100/20" />
-        </div>
+    <div>
+        <x-heading
+            size="xl"
+            level="1"
+        >
+            {{ __('Dashboard') }}
+        </x-heading>
+
+        <x-subheading>
+            {{ today()->format('F Y') }}
+        </x-subheading>
+
+        <canvas id="this-month-todos"></canvas>
     </div>
+
+    @push('script')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            const ctx = document.getElementById('this-month-todos');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: @json($labels),
+                    datasets: @json($datasets),
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+    @endpush
 </x-layouts.app>
