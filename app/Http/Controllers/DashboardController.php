@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Todo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -13,17 +14,21 @@ class DashboardController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $dailyTodos = $this->thisMonthTodos([
-            DB::raw('DAY(due_at) as group_key'),
-        ]);
+        $data['dailyChart'] = Cache::remember('this-month-daily-chart', now()->addWeek(), function () {
+            $dailyTodos = $this->thisMonthTodos([
+                DB::raw('DAY(due_at) as group_key'),
+            ]);
 
-        $data['dailyChart'] = $this->formatToChartData($dailyTodos);
+            return $this->formatToChartData($dailyTodos);
+        });
 
-        $weeklyTodos = $this->thisMonthTodos([
-            DB::raw('WEEK(due_at) as group_key'),
-        ]);
+        $data['weeklyChart'] = Cache::remember('this-month-weekly-chart', now()->addWeek(), function () {
+            $weeklyTodos = $this->thisMonthTodos([
+                DB::raw('WEEK(due_at) as group_key'),
+            ]);
 
-        $data['weeklyChart'] = $this->formatToChartData($weeklyTodos);
+            return $this->formatToChartData($weeklyTodos);
+        });
 
         return view('dashboard', $data);
     }
