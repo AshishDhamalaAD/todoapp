@@ -13,19 +13,40 @@ class DashboardController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $todos = Todo::query()
+        $dailyTodos = $this->thisMonthTodos([
+            DB::raw('DAY(due_at) as group_key'),
+        ]);
+
+        $data['dailyChart'] = $this->formatToChartData($dailyTodos);
+
+        $weeklyTodos = $this->thisMonthTodos([
+            DB::raw('WEEK(due_at) as group_key'),
+        ]);
+
+        $data['weeklyChart'] = $this->formatToChartData($weeklyTodos);
+
+        return view('dashboard', $data);
+    }
+
+    private function thisMonthTodos(array $select = [])
+    {
+        return Todo::query()
             ->select([
-                DB::raw('DAY(due_at) as due_date'),
+                ...$select,
                 DB::raw('COUNT(*) as count'),
                 DB::raw('COUNT(CASE WHEN is_completed THEN 1 ELSE NULL END) as completed_count'),
                 DB::raw('COUNT(CASE WHEN NOT is_completed THEN 1 ELSE NULL END) as incomplete_count'),
             ])
             ->whereBetween('due_at', [today()->startOfMonth(), today()->endOfMonth()])
-            ->groupBy(['due_date'])
-            ->orderBy('due_date')
+            ->groupBy(['group_key'])
+            ->orderBy('group_key')
             ->get();
+    }
 
-        $data['labels'] = $todos->pluck('due_date');
+    private function formatToChartData($todos)
+    {
+        $data['labels'] = $todos->pluck('group_key');
+
         $data['datasets'] = [
             [
                 'label' => 'Total',
@@ -33,17 +54,17 @@ class DashboardController extends Controller
                 'borderWidth' => 1,
             ],
             [
-                'label' => 'Completed',
-                'data' => $todos->pluck('completed_count'),
-                'borderWidth' => 1,
-            ],
-            [
                 'label' => 'Incomplete',
                 'data' => $todos->pluck('incomplete_count'),
                 'borderWidth' => 1,
             ],
+            [
+                'label' => 'Completed',
+                'data' => $todos->pluck('completed_count'),
+                'borderWidth' => 1,
+            ],
         ];
 
-        return view('dashboard', $data);
+        return $data;
     }
 }
