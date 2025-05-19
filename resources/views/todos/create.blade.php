@@ -4,7 +4,7 @@
             size="xl"
             level="1"
         >
-            {{ __('Create Todo') }}
+            {{ $todo->exists ? __('Update Todo') : __('Create Todo') }}
         </x-heading>
 
 

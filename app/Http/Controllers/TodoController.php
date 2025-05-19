@@ -13,8 +13,7 @@ class TodoController extends Controller
     {
         $todos = Todo::query()
             ->where('user_id', Auth::id())
-            ->latest('id')
-            // ->latest('reminder_at')
+            ->latest('reminder_at')
             ->paginate(10);
 
         return view('todos.index', [
