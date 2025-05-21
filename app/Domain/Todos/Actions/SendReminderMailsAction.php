@@ -3,6 +3,7 @@
 namespace App\Domain\Todos\Actions;
 
 use App\Domain\Todos\Mails\SendReminderMail;
+use App\Jobs\SendReminderMailJob;
 use App\Models\Todo;
 use Illuminate\Support\Facades\Mail;
 
@@ -10,6 +11,8 @@ class SendReminderMailsAction
 {
     public function __invoke()
     {
+        $now = now();
+
         $todos = Todo::query()
             ->select(['id', 'user_id', 'title', 'description', 'due_at', 'reminder_at'])
             ->with(['user:id,email'])
@@ -21,14 +24,12 @@ class SendReminderMailsAction
                 today()->endOfDay(),
             ])
             ->orderBy('reminder_at')
-            ->take(1)
             ->get()
             // ->dd()
-            ->each(function (Todo $todo) {
-                Mail::to($todo->user->email)->send(new SendReminderMail($todo));
+            ->each(function (Todo $todo) use ($now) {
+                SendReminderMailJob::dispatch($todo)->delay($now);
 
-                $todo->is_reminder_sent = true;
-                $todo->save();
+                $now->addSeconds(5);
             })
             ;
 
