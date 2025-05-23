@@ -55,7 +55,12 @@
                 <tbody>
                     @foreach ($todos as $todo)
                         <tr
-                            class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
+                            @class([
+                                'border-b dark:border-gray-700 border-gray-200',
+                                'odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800' => !$todo->is_completed,
+                                'bg-green-100' => $todo->is_completed,
+                            ])
+                        >
                             <td class="px-6 py-4">
                                 {{ $todo->title }}
                             </td>
